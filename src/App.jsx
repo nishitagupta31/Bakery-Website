@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -9,7 +8,7 @@ import Rout from './rout';
 import Footer from './footer';
 
 const App = () => {
-  // Unified auth state
+  // Auth state
   const [authState, setAuthState] = useState({
     isAuthenticated: false,
     userData: null,
@@ -18,19 +17,28 @@ const App = () => {
 
   // Cart state
   const [cartData, setCartData] = useState([]);
+  const clearCart = () => setCartData([]);  // Clear cart function
 
-  // Single auth state listener
+  // Product detail states
+  const [detail, setDetail] = useState({});
+  const [showDetail, setShowDetail] = useState(false);
+
+  const getDetails = (item) => {
+    setDetail(item);
+    setShowDetail(true);
+  };
+
+  // Auth listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Fetch additional user data from Firestore
         try {
           const userRef = collection(db, "UserData");
           const querySnapshot = await getDocs(userRef);
           const userData = querySnapshot.docs
             .map(doc => ({ id: doc.id, ...doc.data() }))
             .find(u => u.Email === user.email);
-          
+
           setAuthState({
             isAuthenticated: true,
             userData: {
@@ -64,7 +72,7 @@ const App = () => {
     return () => unsubscribe();
   }, []);
 
-  // Handle cart operations
+  // Cart handler
   const handleCart = (product) => {
     if (!authState.isAuthenticated) {
       alert('Please login to add products to your cart');
@@ -108,6 +116,11 @@ const App = () => {
         cart={handleCart}
         authState={authState}
         setAuthState={setAuthState}
+        clearCart={clearCart}  // Passing clearCart to Rout
+        detail={detail}
+        showDetail={showDetail}
+        setShowDetail={setShowDetail}
+        getDetails={getDetails}
       />
       
       <Footer />

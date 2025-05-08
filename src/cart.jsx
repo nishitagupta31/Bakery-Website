@@ -98,10 +98,17 @@ const Cart = ({ cartData, setCartData }) => {
     }
   </div>
 </div>
-        <div className="subtotal-container">
+       <div className="subtotal-container">
   <div className="subtotal-row">
     <h3 className="subtotal-text">SubTotal: ₹{Totalprice}</h3>
-    <button className="proceed-button">Check Out</button>
+  
+    {cartData.length > 0 && (
+      <div className="proceed-button-container"> {/* Removed the dot */}
+        <Link to="/checkout" className="proceed-button"> {/* Applied class to Link */}
+          Proceed to Checkout
+        </Link>
+      </div>
+    )}
   </div>
 </div>
       </div>
