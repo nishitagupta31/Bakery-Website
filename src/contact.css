@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+.contact {
+    padding: 40px 50px;
+    width: 100%;
+    background-color: #fef8f5; /* subtle soft pink background */
+}
+
+.contact .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.address{
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+}
+.message {
+    flex: 1 1 45%;
+    background: #f7e9e9;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+}
+
+.address_container h3,
+.message_container h3 {
+    color: #400303;
+    font-size: 26px;
+    text-transform: capitalize;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.box {
+    padding: 20px 0;
+    border-bottom: 1px solid #8b4513;
+}
+
+.box:last-child {
+    border-bottom: none;
+}
+
+.box .title {
+    display: flex;
+    align-items: center;
+}
+
+.box .icon {
+    font-size: 22px;
+    color: #da762e;
+}
+
+.box h4 {
+    margin-left: 15px;
+    color: #984b15;
+    font-size: 20px;
+}
+
+.detail {
+    margin-top: 8px;
+    color: #5a2e0d;
+    font-size: 14px;
+}
+
+.message_container .input_box {
+    margin-bottom: 15px;
+}
+
+.message_container input,
+.message_container textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fafafa;
+}
+
+.message_container textarea {
+    height: 180px;
+    resize: none;
+}
+
+.message_container button {
+    padding: 10px 25px;
+    border-radius: 6px;
+    border: none;
+    background-color: #8b4513;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.message_container button:hover {
+    background-color: #5a2e0d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact .container {
+        flex-direction: column;
+    }
+
+    .address,
+    .message {
+        flex: 1 1 100%;
+    }
+}

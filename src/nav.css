@@ -1,0 +1,204 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap');
+
+:root {
+    --bg-main: #f3ecff;
+    --glass: rgba(255, 255, 255, 0.3);
+    --border-glow: rgba(210, 180, 255, 0.4);
+    --text-main: #4a3c39;
+    --accent: #eab5d1;
+    --hover-bg: rgba(255, 255, 255, 0.4);
+    --glass-blur: blur(16px);
+
+    --container-bg: #f9f0ff;
+    --secondary-accent: #d5caff;
+    --shadow-strong: rgba(164, 134, 255, 0.2);
+}
+
+/* Base container */
+.nav-container {
+    width: 100%;
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg-main);
+    padding-top: 16px;
+}
+
+/* Main nav bar */
+.main-nav {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 32px;
+    border-radius: 24px;
+    background: var(--glass);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: 0 8px 32px var(--shadow-strong);
+    border: 1px solid var(--border-glow);
+    transition: background 0.4s ease;
+}
+
+/* Logo styling */
+.logo {
+    height: 48px;
+    transition: transform 0.4s ease;
+}
+.logo:hover {
+    transform: scale(1.08);
+}
+
+/* Navigation links */
+.nav-links {
+    display: flex;
+    gap: 32px;
+}
+
+.nav-link {
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 16px;
+    color: var(--text-main);
+    padding: 8px 16px;
+    border-radius: 18px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0%;
+    height: 2px;
+    background-color: var(--accent);
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.nav-link:hover {
+    background-color: var(--hover-bg);
+    color: #32221f;
+}
+
+/* User section */
+.user-section {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding-right: 10px;
+}
+
+/* Buttons */
+.cart-link,
+.login-link,
+.logout-btn {
+    font-weight: 500;
+    text-decoration: none;
+    padding: 8px 20px;
+    font-size: 15px;
+    border-radius: 24px;
+    color: #4d3a35;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow:
+        inset 0 0 6px rgba(255, 255, 255, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid rgba(255, 209, 220, 0.2);
+}
+
+.cart-link:hover,
+.login-link:hover,
+.logout-btn:hover {
+    background: linear-gradient(135deg, var(--accent), var(--secondary-accent));
+    color: #fff;
+}
+
+.username {
+    font-weight: 600;
+    color: #6d4b46;
+    padding-right: 12px;
+    font-size: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-nav {
+        flex-direction: column;
+        gap: 16px;
+        padding: 20px 16px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .user-section {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .logo {
+        height: 42px;
+    }
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.hamburger span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background: #4a3c39;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    .nav-links,
+    .user-section {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 12px;
+        margin-top: 12px;
+        padding: 10px 0;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-links.active,
+    .user-section.active {
+        display: flex;
+    }
+
+    .main-nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
