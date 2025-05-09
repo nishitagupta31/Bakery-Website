@@ -301,19 +301,6 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
                 </div>
               </label>
               
-              <label className={`payment-option ${formData.paymentMethod === 'razorpay' ? 'active' : ''}`}>
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="razorpay"
-                  checked={formData.paymentMethod === 'razorpay'}
-                  onChange={handleChange}
-                />
-                <div className="payment-content">
-                  <span>Pay Now (Razorpay)</span>
-                  <p>Secure payment with cards, UPI, or wallets.</p>
-                </div>
-              </label>
             </div>
           </div>
         </div>
