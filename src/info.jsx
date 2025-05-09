@@ -41,7 +41,6 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
     }
 
     try {
-      // Add order to Firestore
       await addDoc(collection(db, "orders"), {
         ...formData,
         cartItems: cartData,
@@ -52,7 +51,6 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
         status: 'pending'
       });
 
-      // Clear cart after successful order
       clearCart();
       setSuccess(true);
     } catch (err) {
@@ -66,9 +64,16 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
   if (success) {
     return (
       <div className="success-container">
+        <div className="success-icon">✓</div>
         <h2>Order Confirmed!</h2>
-        <p>Thank you for your purchase. Your order has been received.</p>
-        <p>We'll send a confirmation email shortly.</p>
+        <p>Thank you for your purchase. Your order #12345 has been received.</p>
+        <p>A confirmation email has been sent to {authState.userData?.email || 'your email'}.</p>
+        <button 
+          className="continue-shopping-btn"
+          onClick={() => window.location.href = '/'}
+        >
+          Continue Shopping
+        </button>
       </div>
     );
   }
@@ -77,9 +82,20 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
 
   return (
     <div className="checkout-container">
-      <h1>Checkout</h1>
+      <div className="checkout-header">
+        <h1>Checkout</h1>
+        <div className="checkout-steps">
+          <span className="active">1. Information</span>
+          <span>2. Shipping</span>
+          <span>3. Payment</span>
+        </div>
+      </div>
       
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div className="error-message">
+          <span>⚠️</span> {error}
+        </div>
+      )}
       
       <form onSubmit={handleSubmit} className="checkout-form">
         <div className="form-section">
@@ -93,6 +109,7 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
                 value={formData.firstName}
                 onChange={handleChange}
                 required
+                placeholder="John"
               />
             </div>
             <div className="form-group">
@@ -103,6 +120,7 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
                 value={formData.lastName}
                 onChange={handleChange}
                 required
+                placeholder="Doe"
               />
             </div>
           </div>
@@ -114,6 +132,7 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
               name="companyName"
               value={formData.companyName}
               onChange={handleChange}
+              placeholder="Your Company"
             />
           </div>
           
@@ -139,7 +158,7 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
               name="streetAddress"
               value={formData.streetAddress}
               onChange={handleChange}
-              placeholder="House number and street name"
+              placeholder="123 Main St"
               required
             />
           </div>
@@ -151,6 +170,7 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
               name="apartment"
               value={formData.apartment}
               onChange={handleChange}
+              placeholder="Apt 4B"
             />
           </div>
           
@@ -161,6 +181,7 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
               name="city"
               value={formData.city}
               onChange={handleChange}
+              placeholder="New York"
               required
             />
           </div>
@@ -176,7 +197,10 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
             
             {cartData.map(item => (
               <div key={item.id} className="order-row">
-                <span>{item.Name} × {item.qty}</span>
+                <div className="product-info">
+                  <img src={item.Image} alt={item.Name} width="40" />
+                  <span>{item.Name} × {item.qty}</span>
+                </div>
                 <span>₹{item.price * item.qty}</span>
               </div>
             ))}
@@ -184,6 +208,11 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
             <div className="order-row">
               <span>Subtotal</span>
               <span>₹{subtotal}</span>
+            </div>
+            
+            <div className="order-row">
+              <span>Shipping</span>
+              <span>Free</span>
             </div>
             
             <div className="order-row total">
@@ -203,9 +232,15 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
           </div>
         </div>
 
-        <button type="submit" className="submit-button" disabled={loading || cartData.length === 0}>
-          {loading ? 'Processing...' : 'Place order'}
-        </button>
+        <div className="button">
+          <button 
+            type="submit" 
+            className={`submit-button ${loading ? 'loading' : ''}`} 
+            disabled={loading || cartData.length === 0}
+          >
+            {loading ? 'Processing...' : 'Place Order'}
+          </button>
+        </div>
       </form>
     </div>
   );
