@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { db } from './firebase_config';
 import { addDoc, collection } from 'firebase/firestore';
 import './info.css';
@@ -18,6 +18,22 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+
+  // Load Razorpay script dynamically
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => {
+      setRazorpayLoaded(true);
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,6 +41,44 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleRazorpayPayment = async (orderData) => {
+    if (!razorpayLoaded) {
+      setError('Payment gateway is still loading. Please try again.');
+      return;
+    }
+
+    try {
+      // In a real app, you would call your backend API here to create a Razorpay order
+      // This is a mock implementation for demonstration
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // From environment variables
+        amount: orderData.orderTotal * 100, // Amount in paise
+        currency: 'INR',
+        name: 'Your Store',
+        description: `Order #${orderData.id}`,
+        order_id: `order_${orderData.id}_${Date.now()}`, // Mock order ID
+        handler: function(response) {
+          // In production, verify payment signature on your backend
+          clearCart();
+          setSuccess(true);
+        },
+        prefill: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: authState.userData?.email || formData.email
+        },
+        theme: {
+          color: '#4c130d'
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error("Payment error:", err);
+      setError('Failed to initiate payment. Please try again.');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -41,21 +95,30 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
     }
 
     try {
-      await addDoc(collection(db, "orders"), {
+      const orderData = {
         ...formData,
         cartItems: cartData,
         userId: authState.userData?.uid || 'guest',
         userEmail: authState.userData?.email || formData.email,
         orderTotal: cartData.reduce((total, item) => total + (item.price * item.qty), 0),
         createdAt: new Date(),
-        status: 'pending'
-      });
+        status: formData.paymentMethod === 'cash-on-delivery' ? 'pending' : 'payment-pending'
+      };
 
-      clearCart();
-      setSuccess(true);
+      const docRef = await addDoc(collection(db, "orders"), orderData);
+
+      if (formData.paymentMethod === 'razorpay') {
+        await handleRazorpayPayment({
+          ...orderData,
+          id: docRef.id
+        });
+      } else {
+        clearCart();
+        setSuccess(true);
+      }
     } catch (err) {
-      console.error("Error adding document: ", err);
-      setError('Failed to submit form. Please try again.');
+      console.error("Error:", err);
+      setError('Failed to process order. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -66,7 +129,7 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
       <div className="success-container">
         <div className="success-icon">✓</div>
         <h2>Order Confirmed!</h2>
-        <p>Thank you for your purchase. Your order #12345 has been received.</p>
+        <p>Thank you for your purchase. Your order has been received.</p>
         <p>A confirmation email has been sent to {authState.userData?.email || 'your email'}.</p>
         <button 
           className="continue-shopping-btn"
@@ -222,13 +285,36 @@ const Info = ({ cartData, setCartData, authState, clearCart }) => {
           </div>
           
           <div className="payment-method">
-            <h3>Cash on delivery</h3>
-            <p>Pay with cash upon delivery.</p>
-            <input
-              type="hidden"
-              name="paymentMethod"
-              value="cash-on-delivery"
-            />
+            <h3>Payment Method</h3>
+            <div className="payment-options">
+              <label className={`payment-option ${formData.paymentMethod === 'cash-on-delivery' ? 'active' : ''}`}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="cash-on-delivery"
+                  checked={formData.paymentMethod === 'cash-on-delivery'}
+                  onChange={handleChange}
+                />
+                <div className="payment-content">
+                  <span>Cash on Delivery</span>
+                  <p>Pay with cash upon delivery.</p>
+                </div>
+              </label>
+              
+              <label className={`payment-option ${formData.paymentMethod === 'razorpay' ? 'active' : ''}`}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="razorpay"
+                  checked={formData.paymentMethod === 'razorpay'}
+                  onChange={handleChange}
+                />
+                <div className="payment-content">
+                  <span>Pay Now (Razorpay)</span>
+                  <p>Secure payment with cards, UPI, or wallets.</p>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
 

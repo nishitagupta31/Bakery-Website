@@ -420,3 +420,52 @@
     padding: 0.875rem 1.5rem;
   }
 }
+
+/* Payment Options */
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.payment-option {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.payment-option.active {
+  border-color: #4c130d;
+  background-color: rgba(76, 19, 13, 0.05);
+}
+
+.payment-option:hover {
+  border-color: #c4a07c;
+}
+
+.payment-option input[type="radio"] {
+  margin-right: 1rem;
+  margin-top: 0.25rem;
+}
+
+.payment-content {
+  flex: 1;
+}
+
+.payment-content span {
+  font-weight: 600;
+  color: #2d3748;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.payment-content p {
+  color: #718096;
+  font-size: 0.9rem;
+  margin: 0;
+}
